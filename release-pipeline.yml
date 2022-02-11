@@ -16,7 +16,7 @@ variables:
 jobs:
 - deployment: Deploy
   displayName: Deploy
-  environment: dev
+  environment: DevDeploy
   pool: 
     vmImage: $(vmImageName)
   strategy:
