@@ -8,7 +8,7 @@ resources:
     source: build-artifact-pipeline # Name of the triggering pipeline
     trigger: 
       branches:
-      - master
+      - main
 
 variables:
   vmImageName: 'ubuntu-latest'
