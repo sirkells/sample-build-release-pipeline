@@ -20,8 +20,13 @@ stages:
         archiveType: zip
         archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
         replaceExistingArchive: true
-    - upload: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
-      artifact: drop
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+        artifact: 'drop'
+        publishLocation: 'pipeline' 
+    # - upload: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+    #   artifact: drop
 
   # - task: CopyFiles@2
   #     inputs:
