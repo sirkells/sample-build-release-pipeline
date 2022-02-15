@@ -10,8 +10,6 @@ resources:
       branches:
       - main
 
-variables:
-  vmImageName: 'ubuntu-latest'
 stages:
 - stage: Build
   jobs:
@@ -19,7 +17,7 @@ stages:
     displayName: Deploy
     environment: DevDeploy
     pool: 
-      vmImage: $(vmImageName)
+      vmImage: 'ubuntu-latest'
     strategy:
       runOnce:
         deploy:
