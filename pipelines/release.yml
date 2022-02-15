@@ -18,22 +18,20 @@ stages:
     environment: DevDeploy
     pool: 
       vmImage: 'ubuntu-latest'
-    resources:
-      pipelines:
-      - pipeline: myappbuild  # Name of the pipeline resource
-        source: build-artifact-pipeline # Name of the triggering pipeline
-        trigger: 
-          branches:
-          - main
     strategy:
       runOnce:
         deploy:
           steps:          
-          - download: myappbuild
-            artifact: drop  
+          # - download: myappbuild
+          #   artifact: drop  
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              buildType: 'current'
+              artifactName: 'drop'
+              targetPath: '$(System.ArtifactsDirectory)'
           - task: ExtractFiles@1
             inputs:
-              archiveFilePatterns: '$(PIPELINE.WORKSPACE)/myappbuild/drop/$(resources.pipeline.myappbuild.runID).zip'
+              archiveFilePatterns: '**/*.zip'
               destinationFolder: '$(agent.builddirectory)'
               cleanDestinationFolder: false
           - script: |  

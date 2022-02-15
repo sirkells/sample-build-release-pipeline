@@ -1,7 +1,0 @@
-resources:
-  pipelines:
-  - pipeline: myappbuild  # Name of the pipeline resource
-    source: build-artifact-pipeline # Name of the triggering pipeline
-    trigger: 
-      branches:
-      - main
