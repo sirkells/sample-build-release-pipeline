@@ -35,4 +35,4 @@ stages:
               destinationFolder: '$(agent.builddirectory)'
               cleanDestinationFolder: false
           - script: |  
-              cat $(agent.builddirectory)/greatcode.txt
+              ls $(agent.builddirectory)
