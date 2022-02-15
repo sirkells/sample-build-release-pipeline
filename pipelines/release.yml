@@ -11,7 +11,7 @@
 #       - main
 
 stages:
-- stage: Build
+- stage: Deploy
   jobs:
   - deployment: Deploy
     displayName: Deploy
