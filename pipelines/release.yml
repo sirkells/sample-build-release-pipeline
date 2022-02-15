@@ -1,6 +1,6 @@
 # Explicitly set none for repositry trigger
-trigger:
-- none
+# trigger:
+# - none
 
 resources:
   pipelines:
@@ -12,23 +12,24 @@ resources:
 
 variables:
   vmImageName: 'ubuntu-latest'
-
-jobs:
-- deployment: Deploy
-  displayName: Deploy
-  environment: DevDeploy
-  pool: 
-    vmImage: $(vmImageName)
-  strategy:
-    runOnce:
-      deploy:
-        steps:          
-        - download: myappbuild
-          artifact: drop  
-        - task: ExtractFiles@1
-          inputs:
-            archiveFilePatterns: '$(PIPELINE.WORKSPACE)/myappbuild/drop/$(resources.pipeline.myappbuild.runID).zip'
-            destinationFolder: '$(agent.builddirectory)'
-            cleanDestinationFolder: false
-        - script: |  
-            cat $(agent.builddirectory)/greatcode.txt
+stages:
+- stage: Build
+  jobs:
+  - deployment: Deploy
+    displayName: Deploy
+    environment: DevDeploy
+    pool: 
+      vmImage: $(vmImageName)
+    strategy:
+      runOnce:
+        deploy:
+          steps:          
+          - download: myappbuild
+            artifact: drop  
+          - task: ExtractFiles@1
+            inputs:
+              archiveFilePatterns: '$(PIPELINE.WORKSPACE)/myappbuild/drop/$(resources.pipeline.myappbuild.runID).zip'
+              destinationFolder: '$(agent.builddirectory)'
+              cleanDestinationFolder: false
+          - script: |  
+              cat $(agent.builddirectory)/greatcode.txt
