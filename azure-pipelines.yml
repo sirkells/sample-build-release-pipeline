@@ -9,11 +9,11 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
-extends:
-  - template: pipelines/resources.yml
-  - template: pipelines/build.yml
-  - template: pipelines/release.yml
+# extends:
+#   - template: pipelines/resources.yml
+#   - template: pipelines/build.yml
+#   - template: pipelines/release.yml
 
-# stages:
-# - template: pipelines/build.yml
-# - template: pipelines/release.yml
+stages:
+- template: pipelines/build.yml
+- template: pipelines/release.yml
