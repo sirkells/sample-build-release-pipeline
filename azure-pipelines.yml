@@ -10,5 +10,5 @@ pool:
   vmImage: 'ubuntu-latest'
 
 stages:
-- template: pipeline/build.yaml
-- template: pipeline/release.yaml
+- template: pipelines/build.yaml
+- template: pipelines/release.yaml
