@@ -35,4 +35,4 @@ stages:
               destinationFolder: '$(agent.builddirectory)'
               cleanDestinationFolder: false
           - script: |  
-              ls -R $(agent.builddirectory)
+              ls -R $(Build.SourcesDirectory)
