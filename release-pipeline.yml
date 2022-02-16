@@ -32,14 +32,14 @@ stages:
       runOnce:
         deploy:
           steps:          
-          - download: $(PipelineName)
+          - download: MyAppPipeline
             artifact: $(ArtifactName)
           - template: templates/deploymentJob.yml
             parameters:
-                buildId: $(BuildId)
-                artifactName: $(ArtifactName)
-                pipelineName: $(PipelineName)
-                runID: '$(PIPELINE.WORKSPACE)/MyAppPipeline/AppBuildArtifact/$(resources.pipeline.MyAppPipeline.runID).zip'
+              buildId: $(BuildId)
+              artifactName: $(ArtifactName)
+              pipelineName: $(PipelineName)
+              runID: '$(PIPELINE.WORKSPACE)/MyAppPipeline/AppBuildArtifact/$(resources.pipeline.MyAppPipeline.runID).zip'
   # - deployment: Deploy
   #   displayName: Deploy
   #   environment: DevDeploy
