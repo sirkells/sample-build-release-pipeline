@@ -27,7 +27,7 @@ jobs:
           artifact: ${{ parameters.artifactName }}  
         - task: ExtractFiles@1
           inputs:
-            archiveFilePatterns: '$(PIPELINE.WORKSPACE)/${{ parameters.pipelineName }}/${{ parameters.artifactName }}/${{ parameters.runID }}.zip'
+            archiveFilePatterns: ${{ parameters.runID }}
             destinationFolder: '$(agent.builddirectory)'
             cleanDestinationFolder: false
         - script: |  

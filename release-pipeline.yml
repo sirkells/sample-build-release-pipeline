@@ -30,7 +30,7 @@ stages:
         buildId: $(BuildId)
         artifactName: $(ArtifactName)
         pipelineName: $(PipelineName)
-        runID: resources.pipeline.$(PipelineName).runID
+        runID: '$(PIPELINE.WORKSPACE)/MyAppPipeline/AppBuildArtifact/$(resources.pipeline.MyAppPipeline.runID).zip'
   # - deployment: Deploy
   #   displayName: Deploy
   #   environment: DevDeploy
