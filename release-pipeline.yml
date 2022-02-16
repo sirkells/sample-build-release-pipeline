@@ -38,7 +38,7 @@ stages:
               artifactName: $(ArtifactName)
               pipelineName: $(PipelineName)
               runID: '$(PIPELINE.WORKSPACE)/MyAppPipeline/AppBuildArtifact/$(resources.pipeline.MyAppPipeline.runID).zip'
-  - stage: Test_Deploy
+- stage: Test_Deploy
   # condition: startsWith(variables['resources.pipeline.CustomerApiBuild.sourcebranch'], 'refs/pull/') 
   jobs:
   - deployment: Deploy
