@@ -16,8 +16,6 @@ parameters:
     default:
 
 steps:
-  - download: ${{ parameters.pipelineName }}
-    artifact: ${{ parameters.artifactName }}
   - task: ExtractFiles@1
     inputs:
       archiveFilePatterns: ${{ parameters.runID }}
