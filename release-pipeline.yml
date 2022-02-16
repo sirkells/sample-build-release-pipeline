@@ -1,34 +1,46 @@
+name: Release-CD-pipeline
 # Explicitly set none for repositry trigger
 trigger:
 - none
 
+variables:
+  vmImageName: 'ubuntu-latest'
+  ArtifactName: 'AppBuildArtifact'
+  ArtifactSourceFolder: $(ArtifactName)/$(ArtifactName)
+  BuildId: $(Build.BuildId)
+  PipelineName: MyAppPipeline
+  Source: build-CI-pipeline
+
 resources:
   pipelines:
-  - pipeline: myappbuild  # Name of the pipeline resource
-    source: build-artifact-pipeline # Name of the triggering pipeline
+  - pipeline: $(PipelineName)  # Name of the pipeline resource
+    source: $(Source) # Name of the triggering pipeline
     trigger: 
       branches:
       - main
-
-variables:
-  vmImageName: 'ubuntu-latest'
-
 jobs:
-- deployment: Deploy
-  displayName: Deploy
-  environment: DevDeploy
-  pool: 
-    vmImage: $(vmImageName)
-  strategy:
-    runOnce:
-      deploy:
-        steps:          
-        - download: myappbuild
-          artifact: drop  
-        - task: ExtractFiles@1
-          inputs:
-            archiveFilePatterns: '$(PIPELINE.WORKSPACE)/myappbuild/drop/$(resources.pipeline.myappbuild.runID).zip'
-            destinationFolder: '$(agent.builddirectory)'
-            cleanDestinationFolder: false
-        - script: |  
-            cat $(agent.builddirectory)/greatcode.txt
+- template: templates/deploymentJob.yml
+  parameters:
+      buildId: $(BuildId)
+      artifactName: $(ArtifactName)
+      pipelineName: $(PipelineName)
+      runID: resources.pipeline.$(PipelineName).runID
+      vmImageName: $(vmImageName)
+# - deployment: Deploy
+#   displayName: Deploy
+#   environment: DevDeploy
+#   pool: 
+#     vmImage: $(vmImageName)
+#   strategy:
+#     runOnce:
+#       deploy:
+#         steps:          
+#         - download: myappbuild
+#           artifact: drop  
+#         - task: ExtractFiles@1
+#           inputs:
+#             archiveFilePatterns: '$(PIPELINE.WORKSPACE)/myappbuild/drop/$(resources.pipeline.myappbuild.runID).zip'
+#             destinationFolder: '$(agent.builddirectory)'
+#             cleanDestinationFolder: false
+#         - script: |  
+#             cat $(agent.builddirectory)/greatcode.txt

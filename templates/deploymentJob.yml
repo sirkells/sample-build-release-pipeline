@@ -1,0 +1,36 @@
+parameters:
+  - name: buildId
+    type: string
+    default: 
+  - name: artifactName
+    type: string
+    default:
+  - name: pipelineName
+    type: string
+    default:
+  - name: runID
+    type: string
+    default:
+  - name: vmImageName
+    type: string
+    default:
+
+jobs:
+- deployment: Deploy
+  displayName: Deploy to Dev
+  environment: DevDeploy
+  pool: 
+    vmImage: ${{ parameters.vmImageName }}
+  strategy:
+    runOnce:
+      deploy:
+        steps:          
+        - download: ${{ parameters.pipelineName }} 
+          artifact: ${{ parameters.artifactName }}  
+        - task: ExtractFiles@1
+          inputs:
+            archiveFilePatterns: '$(PIPELINE.WORKSPACE)/${{ parameters.pipelineName }}/${{ parameters.artifactName }}/${{ parameters.runID }}.zip'
+            destinationFolder: '$(agent.builddirectory)'
+            cleanDestinationFolder: false
+        - script: |  
+            cat $(agent.builddirectory)/greatcode.txt
