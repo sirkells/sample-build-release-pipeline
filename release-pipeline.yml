@@ -23,8 +23,8 @@ jobs:
     runOnce:
       deploy:
         steps:          
-        - download: myappbuild
-          artifact: drop  
+        - download: MyAppPipeline
+          artifact: AppBuildArtifact  
         - task: ExtractFiles@1
           inputs:
             archiveFilePatterns: '$(PIPELINE.WORKSPACE)/MyAppPipeline/AppBuildArtifact/$(resources.pipeline.MyAppPipeline.runID).zip'
