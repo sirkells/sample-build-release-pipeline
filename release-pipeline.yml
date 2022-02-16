@@ -10,24 +10,26 @@ resources:
     trigger: 
       branches:
       - main
-      
+pool:
+  vmImage: 'ubuntu-latest'
 variables:
   vmImageName: 'ubuntu-latest'
   ArtifactName: 'AppBuildArtifact'
   ArtifactSourceFolder: $(ArtifactName)/$(ArtifactName)
   BuildId: $(Build.BuildId)
-  PipelineName: MyAppPipeline
+  PipelineName: 'MyAppPipeline'
   Source: build-CI-pipeline
 
-
-jobs:
-- template: templates/deploymentJob.yml
-  parameters:
-      buildId: $(BuildId)
-      artifactName: $(ArtifactName)
-      pipelineName: $(PipelineName)
-      runID: resources.pipeline.$(PipelineName).runID
-      vmImageName: $(vmImageName)
+stages:
+- stage: Dev_Deploy
+  # condition: startsWith(variables['resources.pipeline.CustomerApiBuild.sourcebranch'], 'refs/pull/') 
+  jobs:
+  - template: templates/deploymentJob.yml
+    parameters:
+        buildId: $(BuildId)
+        artifactName: $(ArtifactName)
+        pipelineName: $(PipelineName)
+        runID: resources.pipeline.$(PipelineName).runID
 # - deployment: Deploy
 #   displayName: Deploy
 #   environment: DevDeploy
