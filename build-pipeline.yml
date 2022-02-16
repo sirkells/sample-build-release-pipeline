@@ -20,6 +20,8 @@ jobs:
   pool:
     vmImage: $(vmImageName)
   steps:
+  - script: echo current version is $(GitVersion)
+    displayName: 'Display calculated version'
   - script: | 
       echo 'do some unit test'
     displayName: 'unit test'
