@@ -3,6 +3,14 @@ name: Release-CD-pipeline
 trigger:
 - none
 
+resources:
+  pipelines:
+  - pipeline: MyAppPipeline  # Name of the pipeline resource
+    source: build-CI-pipeline # Name of the triggering pipeline
+    trigger: 
+      branches:
+      - main
+      
 variables:
   vmImageName: 'ubuntu-latest'
   ArtifactName: 'AppBuildArtifact'
@@ -11,13 +19,7 @@ variables:
   PipelineName: MyAppPipeline
   Source: build-CI-pipeline
 
-resources:
-  pipelines:
-  - pipeline: $(PipelineName)  # Name of the pipeline resource
-    source: $(Source) # Name of the triggering pipeline
-    trigger: 
-      branches:
-      - main
+
 jobs:
 - template: templates/deploymentJob.yml
   parameters:

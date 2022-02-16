@@ -7,6 +7,7 @@ trigger:
     exclude:
     - build-pipeline.yml
     - release-pipeline.yml
+    - templates/*
 
 variables:
   vmImageName: 'ubuntu-latest'
