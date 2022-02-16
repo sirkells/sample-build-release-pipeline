@@ -18,7 +18,7 @@ variables:
   ArtifactName: AppBuildArtifact
   ArtifactSourceFolder: $(ArtifactName)/$(ArtifactName)
   BuildId: $(Build.BuildId)
-  PipelineName: MyAppPipeline
+  PipelineName: 'MyAppPipeline'
   Source: build-CI-pipeline
 
 stages:
@@ -32,8 +32,8 @@ stages:
       runOnce:
         deploy:
           steps:
-          - download: MyAppPipeline
-            artifact: $(ArtifactName)            
+          - download: $(PipelineName)
+            artifact: $(ArtifactName)
           - template: templates/deploymentJob.yml
             parameters:
               buildId: $(BuildId)
