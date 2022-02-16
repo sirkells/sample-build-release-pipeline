@@ -19,8 +19,6 @@ jobs:
 - deployment: Deploy
   displayName: Deploy to Dev
   environment: DevDeploy
-  pool: 
-    vmImage: ${{ parameters.vmImageName }}
   strategy:
     runOnce:
       deploy:

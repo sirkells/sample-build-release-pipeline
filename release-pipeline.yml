@@ -15,40 +15,40 @@ pool:
 
 variables:
   vmImageName: 'ubuntu-latest'
-  ArtifactName: 'AppBuildArtifact'
+  ArtifactName: AppBuildArtifact
   ArtifactSourceFolder: $(ArtifactName)/$(ArtifactName)
   BuildId: $(Build.BuildId)
-  PipelineName: 'MyAppPipeline'
+  PipelineName: MyAppPipeline
   Source: build-CI-pipeline
 
 stages:
 - stage: Dev_Deploy
   # condition: startsWith(variables['resources.pipeline.CustomerApiBuild.sourcebranch'], 'refs/pull/') 
   jobs:
-  # - template: templates/deploymentJob.yml
-  #   parameters:
-  #       buildId: $(BuildId)
-  #       artifactName: $(ArtifactName)
-  #       pipelineName: $(PipelineName)
-  #       runID: resources.pipeline.$(PipelineName).runID
-  - deployment: Deploy
-    displayName: Deploy
-    environment: DevDeploy
-    pool: 
-      vmImage: $(vmImageName)
-    strategy:
-      runOnce:
-        deploy:
-          steps:          
-          - download: MyAppPipeline
-            artifact: AppBuildArtifact  
-          - task: ExtractFiles@1
-            inputs:
-              archiveFilePatterns: '$(PIPELINE.WORKSPACE)/MyAppPipeline/AppBuildArtifact/$(resources.pipeline.MyAppPipeline.runID).zip'
-              destinationFolder: '$(agent.builddirectory)'
-              cleanDestinationFolder: false
-          - script: |  
-              cat $(agent.builddirectory)/greatcode.txt
+  - template: templates/deploymentJob.yml
+    parameters:
+        buildId: $(BuildId)
+        artifactName: $(ArtifactName)
+        pipelineName: $(PipelineName)
+        runID: resources.pipeline.$(PipelineName).runID
+  # - deployment: Deploy
+  #   displayName: Deploy
+  #   environment: DevDeploy
+  #   pool: 
+  #     vmImage: $(vmImageName)
+  #   strategy:
+  #     runOnce:
+  #       deploy:
+  #         steps:          
+  #         - download: MyAppPipeline
+  #           artifact: AppBuildArtifact  
+  #         - task: ExtractFiles@1
+  #           inputs:
+  #             archiveFilePatterns: '$(PIPELINE.WORKSPACE)/MyAppPipeline/AppBuildArtifact/$(resources.pipeline.MyAppPipeline.runID).zip'
+  #             destinationFolder: '$(agent.builddirectory)'
+  #             cleanDestinationFolder: false
+  #         - script: |  
+  #             cat $(agent.builddirectory)/greatcode.txt
 
 # jobs:
 # - deployment: Deploy
