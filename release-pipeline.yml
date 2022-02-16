@@ -17,8 +17,6 @@ jobs:
 - deployment: Deploy
   displayName: Deploy
   environment: DevDeploy
-  pool: 
-    vmImage: $(vmImageName)
   strategy:
     runOnce:
       deploy:
