@@ -9,7 +9,10 @@ resources:
     source: build-CI-pipeline # Name of the triggering pipeline
     trigger: 
       branches:
-      - main
+        include:
+         - main
+         - pull/*
+         - refs/pull/*
 pool:
   vmImage: 'ubuntu-latest'
 
@@ -22,8 +25,45 @@ variables:
   Source: build-CI-pipeline
 
 stages:
+- stage: PR_Deploy
+  condition: startsWith(variables['resources.pipeline.MyAppPipeline.sourcebranch'], 'refs/pull/') 
+  variables:      
+    DeploymentEnvironment: 'pr-$(prId)'
+  jobs:
+  - deployment: DB_PR
+    environment: "DB-PR-DevDeploy" 
+    displayName: 'Deploy DB to the PR environment'    
+    strategy:
+      runOnce:
+        deploy:
+          steps:           
+          - download: MyAppPipeline
+            artifact: $(ArtifactName)
+          - template: templates/GetPrId.yml
+          - script: | 
+              echo 'PR_DEPLOY'
+            displayName: 'Deploy PR'
+ 
+- stage: PR_Delete
+  dependsOn: PR_Deploy  
+  condition: succeeded('PR_Deploy')
+  variables:
+    K8sNamespace: '$(ApiName)-pr-$(prId)'
+  jobs:  
+  - deployment: Delete_PR
+    environment: "DB-PR-DevDelete" 
+    displayName: Delete DB from the PR environment
+    strategy:
+      runOnce:
+        deploy:
+         steps:
+         - download: none
+         - template: templates/GetPrId.yml
+         - script: | 
+              echo 'PR_DELETE'
+           displayName: 'Delete PR'
 - stage: Dev_Deploy
-  # condition: startsWith(variables['resources.pipeline.CustomerApiBuild.sourcebranch'], 'refs/pull/') 
+  condition: startsWith(variables['resources.pipeline.MyAppPipeline.sourcebranch'], 'refs/heads/main') 
   jobs:
   - deployment: Deploy
     displayName: Deploy to Dev
@@ -39,9 +79,9 @@ stages:
               buildId: $(BuildId)
               artifactName: $(ArtifactName)
               pipelineName: $(PipelineName)
-              runID: '$(PIPELINE.WORKSPACE)/MyAppPipeline/AppBuildArtifact/$(resources.pipeline.MyAppPipeline.runID).zip'
+              runID: '$(PIPELINE.WORKSPACE)/MyAppPipeline/AppBuildArtifact/$(resources.pipeline.MyAppPipeline.runID)'
 - stage: Test_Deploy
-  # condition: startsWith(variables['resources.pipeline.CustomerApiBuild.sourcebranch'], 'refs/pull/') 
+  condition: startsWith(variables['resources.pipeline.CustomerApiBuild.sourcebranch'], 'refs/heads/master') 
   jobs:
   - deployment: Deploy
     displayName: Deploy to Test
@@ -94,3 +134,19 @@ stages:
 #             cleanDestinationFolder: false
 #         - script: |  
 #             cat $(agent.builddirectory)/greatcode.txt
+
+
+# jobs:  
+#   - job: waitForValidation
+#     displayName: Wait for external validation  
+#     pool: server    
+#     timeoutInMinutes: 4320 # job times out in 3 days
+#     steps:   
+#     - task: ManualValidation@0
+#       timeoutInMinutes: 1440 # task times out in 1 day
+#       inputs:
+#         notifyUsers: |
+#           test@test.com
+#           example@example.com
+#         instructions: 'Please validate the build configuration and resume'
+#         onTimeout: 'resume'

@@ -18,7 +18,7 @@ parameters:
 steps:
   - task: ExtractFiles@1
     inputs:
-      archiveFilePatterns: ${{ parameters.runID }}
+      archiveFilePatterns: ${{ parameters.runID }}.zip
       destinationFolder: '$(agent.builddirectory)'
       cleanDestinationFolder: false
   - script: |  
