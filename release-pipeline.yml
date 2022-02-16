@@ -25,12 +25,21 @@ stages:
 - stage: Dev_Deploy
   # condition: startsWith(variables['resources.pipeline.CustomerApiBuild.sourcebranch'], 'refs/pull/') 
   jobs:
-  - template: templates/deploymentJob.yml
-    parameters:
-        buildId: $(BuildId)
-        artifactName: $(ArtifactName)
-        pipelineName: $(PipelineName)
-        runID: '$(PIPELINE.WORKSPACE)/MyAppPipeline/AppBuildArtifact/$(resources.pipeline.MyAppPipeline.runID).zip'
+  - deployment: Deploy
+    displayName: Deploy to Dev
+    environment: DevDeploy
+    strategy:
+      runOnce:
+        deploy:
+          steps:          
+          - download: $(PipelineName)
+            artifact: $(ArtifactName)
+          - template: templates/deploymentJob.yml
+            parameters:
+                buildId: $(BuildId)
+                artifactName: $(ArtifactName)
+                pipelineName: $(PipelineName)
+                runID: '$(PIPELINE.WORKSPACE)/MyAppPipeline/AppBuildArtifact/$(resources.pipeline.MyAppPipeline.runID).zip'
   # - deployment: Deploy
   #   displayName: Deploy
   #   environment: DevDeploy

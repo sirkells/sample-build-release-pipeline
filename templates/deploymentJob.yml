@@ -15,20 +15,11 @@ parameters:
     type: string
     default:
 
-jobs:
-- deployment: Deploy
-  displayName: Deploy to Dev
-  environment: DevDeploy
-  strategy:
-    runOnce:
-      deploy:
-        steps:          
-        - download: ${{ parameters.pipelineName }} 
-          artifact: ${{ parameters.artifactName }}  
-        - task: ExtractFiles@1
-          inputs:
-            archiveFilePatterns: ${{ parameters.runID }}
-            destinationFolder: '$(agent.builddirectory)'
-            cleanDestinationFolder: false
-        - script: |  
-            cat $(agent.builddirectory)/greatcode.txt
+steps:
+  - task: ExtractFiles@1
+    inputs:
+      archiveFilePatterns: ${{ parameters.runID }}
+      destinationFolder: '$(agent.builddirectory)'
+      cleanDestinationFolder: false
+  - script: |  
+      cat $(agent.builddirectory)/greatcode.txt
