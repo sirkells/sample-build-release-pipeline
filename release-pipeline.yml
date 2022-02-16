@@ -32,7 +32,7 @@ stages:
       runOnce:
         deploy:
           steps:
-          - download: $(PipelineName)
+          - download: MyAppPipeline
             artifact: $(ArtifactName)
           - template: templates/deploymentJob.yml
             parameters:
