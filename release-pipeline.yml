@@ -81,7 +81,8 @@ stages:
               pipelineName: $(PipelineName)
               runID: '$(PIPELINE.WORKSPACE)/MyAppPipeline/AppBuildArtifact/$(resources.pipeline.MyAppPipeline.runID)'
 - stage: Test_Deploy
-  condition: startsWith(variables['resources.pipeline.CustomerApiBuild.sourcebranch'], 'refs/heads/main') 
+  condition: startsWith(variables['resources.pipeline.MyAppPipeline.sourcebranch'], 'refs/heads/main') 
+  dependsOn: Dev_Deploy 
   jobs:
   - deployment: Deploy
     displayName: Deploy to Test
@@ -99,7 +100,8 @@ stages:
               pipelineName: $(PipelineName)
               runID: '$(PIPELINE.WORKSPACE)/MyAppPipeline/AppBuildArtifact/$(resources.pipeline.MyAppPipeline.runID).zip'
 - stage: Preprod_Deploy
-  condition: startsWith(variables['resources.pipeline.CustomerApiBuild.sourcebranch'], 'refs/heads/main') 
+  condition: startsWith(variables['resources.pipeline.MyAppPipeline.sourcebranch'], 'refs/heads/main') 
+  dependsOn: Test_Deploy 
   jobs:
   - deployment: Deploy
     displayName: Deploy to Preprod
