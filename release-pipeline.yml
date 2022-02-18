@@ -81,7 +81,7 @@ stages:
               pipelineName: $(PipelineName)
               runID: '$(PIPELINE.WORKSPACE)/MyAppPipeline/AppBuildArtifact/$(resources.pipeline.MyAppPipeline.runID)'
 - stage: Test_Deploy
-  condition: startsWith(variables['resources.pipeline.CustomerApiBuild.sourcebranch'], 'refs/heads/master') 
+  condition: startsWith(variables['resources.pipeline.CustomerApiBuild.sourcebranch'], 'refs/heads/main') 
   jobs:
   - deployment: Deploy
     displayName: Deploy to Test
@@ -90,6 +90,28 @@ stages:
       runOnce:
         deploy:
           steps:
+          - download: MyAppPipeline
+            artifact: $(ArtifactName)        
+          - template: templates/deploymentJob.yml
+            parameters:
+              buildId: $(BuildId)
+              artifactName: $(ArtifactName)
+              pipelineName: $(PipelineName)
+              runID: '$(PIPELINE.WORKSPACE)/MyAppPipeline/AppBuildArtifact/$(resources.pipeline.MyAppPipeline.runID).zip'
+- stage: Preprod_Deploy
+  condition: startsWith(variables['resources.pipeline.CustomerApiBuild.sourcebranch'], 'refs/heads/main') 
+  jobs:
+  - deployment: Deploy
+    displayName: Deploy to Preprod
+    environment: Preprod
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: ManualValidation@0
+            inputs:
+              notifyUsers: 'kelechi_igbokwe@yahoo.com'
+              instructions: 'Please approve for preprod'
           - download: MyAppPipeline
             artifact: $(ArtifactName)        
           - template: templates/deploymentJob.yml
