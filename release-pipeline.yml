@@ -23,7 +23,7 @@ variables:
   BuildId: $(Build.BuildId)
   PipelineName: 'MyAppPipeline'
   Source: build-CI-pipeline
-
+  isMain: $[startsWith(variables['resources.pipeline.MyAppPipeline.sourcebranch'], 'refs/heads/main')]
 stages:
 - stage: PR_Deploy
   condition: startsWith(variables['resources.pipeline.MyAppPipeline.sourcebranch'], 'refs/pull/') 
@@ -63,7 +63,8 @@ stages:
               echo 'PR_DELETE'
            displayName: 'Delete PR'
 - stage: Dev_Deploy
-  condition: startsWith(variables['resources.pipeline.MyAppPipeline.sourcebranch'], 'refs/heads/main') 
+  # condition: and(startsWith(variables['resources.pipeline.MyAppPipeline.sourcebranch'], 'refs/heads/main'), succeeded('Dev'))
+  condition: eq(variables.isMain, 'true')
   jobs:
   - deployment: Deploy
     displayName: Deploy to Dev
@@ -81,7 +82,7 @@ stages:
               pipelineName: $(PipelineName)
               runID: '$(PIPELINE.WORKSPACE)/MyAppPipeline/AppBuildArtifact/$(resources.pipeline.MyAppPipeline.runID)'
 - stage: Test_Deploy
-  condition: startsWith(variables['resources.pipeline.MyAppPipeline.sourcebranch'], 'refs/heads/main') 
+  condition: and(succeeded('Dev_Deploy'), eq(variables.isMain, 'true'))
   dependsOn: Dev_Deploy 
   jobs:
   - deployment: Deploy
@@ -98,9 +99,9 @@ stages:
               buildId: $(BuildId)
               artifactName: $(ArtifactName)
               pipelineName: $(PipelineName)
-              runID: '$(PIPELINE.WORKSPACE)/MyAppPipeline/AppBuildArtifact/$(resources.pipeline.MyAppPipeline.runID).zip'
+              runID: '$(PIPELINE.WORKSPACE)/MyAppPipeline/AppBuildArtifact/$(resources.pipeline.MyAppPipeline.runID)'
 - stage: Preprod_Deploy
-  condition: startsWith(variables['resources.pipeline.MyAppPipeline.sourcebranch'], 'refs/heads/main') 
+  condition: and(succeeded('Test_Deploy'), eq(variables.isMain, 'true'))
   dependsOn: Test_Deploy 
   jobs:
   - deployment: Deploy
@@ -117,7 +118,7 @@ stages:
               buildId: $(BuildId)
               artifactName: $(ArtifactName)
               pipelineName: $(PipelineName)
-              runID: '$(PIPELINE.WORKSPACE)/MyAppPipeline/AppBuildArtifact/$(resources.pipeline.MyAppPipeline.runID).zip'
+              runID: '$(PIPELINE.WORKSPACE)/MyAppPipeline/AppBuildArtifact/$(resources.pipeline.MyAppPipeline.runID)'
   # - deployment: Deploy
   #   displayName: Deploy
   #   environment: DevDeploy
